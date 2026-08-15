@@ -374,6 +374,51 @@
       font-family: var(--font-body);
     }
 
+    .service-photo {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: .85rem;
+    }
+
+    .service-card.oculto-config { display: none; }
+
+    /* ── GALERIA ── */
+    #galeria { background: var(--carbon); }
+
+    .galeria-conteudo { display: flex; flex-direction: column; gap: 3rem; }
+
+    .galeria-cat-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 1rem;
+      color: var(--white);
+    }
+
+    .galeria-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: .75rem;
+    }
+
+    .galeria-grid img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .galeria-vazio {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
     /* ── DIFERENCIAIS ── */
     #diferenciais { background: var(--black); }
 
@@ -658,6 +703,7 @@
     <a href="#" class="nav-logo">Seu <span>Lava Jato</span></a>
     <ul class="nav-links" role="list">
       <li><a href="#servicos">Serviços</a></li>
+      <li><a href="#galeria">Galeria</a></li>
       <li><a href="#diferenciais">Diferenciais</a></li>
       <li><a href="#contato" class="nav-cta">Agendar</a></li>
     </ul>
@@ -726,48 +772,60 @@
     </div>
 
     <div class="services-grid" role="list">
-      <article class="service-card" role="listitem">
+      <article class="service-card" role="listitem" data-categoria="Lavagem Simples">
         <span class="service-icon" aria-hidden="true">🚿</span>
         <h3 class="service-name">Lavagem Simples</h3>
         <p class="service-desc">Lavagem externa completa com shampoo automotivo, enxágue e secagem com flanela.</p>
-        <div class="service-price">R$ 00 <span>/ por veículo</span></div>
+        <div class="service-price"><span class="price-value">Consulte</span> <span>/ por veículo</span></div>
       </article>
 
-      <article class="service-card" role="listitem">
+      <article class="service-card" role="listitem" data-categoria="Lavagem Completa">
         <span class="service-icon" aria-hidden="true">✨</span>
         <h3 class="service-name">Lavagem Completa</h3>
         <p class="service-desc">Externa + limpeza interna de bancos, tapetes, painel e vidros. Sai cheiroso!</p>
-        <div class="service-price">R$ 00 <span>/ por veículo</span></div>
+        <div class="service-price"><span class="price-value">Consulte</span> <span>/ por veículo</span></div>
       </article>
 
-      <article class="service-card" role="listitem">
+      <article class="service-card" role="listitem" data-categoria="Polimento">
         <span class="service-icon" aria-hidden="true">🔆</span>
         <h3 class="service-name">Polimento</h3>
         <p class="service-desc">Remove riscos superficiais e devolve o brilho original à pintura do seu veículo.</p>
-        <div class="service-price">R$ 00 <span>/ por veículo</span></div>
+        <div class="service-price"><span class="price-value">Consulte</span> <span>/ por veículo</span></div>
       </article>
 
-      <article class="service-card" role="listitem">
+      <article class="service-card" role="listitem" data-categoria="Higienização Interna">
         <span class="service-icon" aria-hidden="true">🧽</span>
         <h3 class="service-name">Higienização Interna</h3>
         <p class="service-desc">Limpeza profunda com extratora em bancos, carpetes e teto. Elimina ácaros e odores.</p>
-        <div class="service-price">R$ 00 <span>/ por veículo</span></div>
+        <div class="service-price"><span class="price-value">Consulte</span> <span>/ por veículo</span></div>
       </article>
 
-      <article class="service-card" role="listitem">
+      <article class="service-card" role="listitem" data-categoria="Cristalização">
         <span class="service-icon" aria-hidden="true">🛡️</span>
         <h3 class="service-name">Cristalização</h3>
         <p class="service-desc">Proteção da pintura com cristalizador que impermeabiliza e prolonga o brilho por meses.</p>
-        <div class="service-price">R$ 00 <span>/ por veículo</span></div>
+        <div class="service-price"><span class="price-value">Consulte</span> <span>/ por veículo</span></div>
       </article>
 
-      <article class="service-card" role="listitem">
+      <article class="service-card" role="listitem" data-categoria="Pacote Premium">
         <span class="service-icon" aria-hidden="true">🚗</span>
         <h3 class="service-name">Pacote Premium</h3>
         <p class="service-desc">Lavagem completa + polimento + higienização + cristalização. Tudo em uma visita.</p>
-        <div class="service-price">R$ 00 <span>/ por veículo</span></div>
+        <div class="service-price"><span class="price-value">Consulte</span> <span>/ por veículo</span></div>
       </article>
     </div>
+  </section>
+
+  <!-- GALERIA -->
+  <section id="galeria" aria-labelledby="galeria-titulo">
+    <div class="services-header">
+      <div>
+        <p class="section-eyebrow">Nosso trabalho</p>
+        <h2 class="section-title" id="galeria-titulo">Galeria</h2>
+      </div>
+      <p class="section-desc">Fotos reais de veículos atendidos, organizadas por serviço.</p>
+    </div>
+    <div id="galeria-conteudo" class="galeria-conteudo"></div>
   </section>
 
   <!-- DIFERENCIAIS -->
@@ -965,6 +1023,90 @@
     }, { threshold: .4 });
 
     sections.forEach(s => observer.observe(s));
+
+    // ── CONTEÚDO DINÂMICO (fotos e preços cadastrados no painel) ──
+    const SUPA_URL = 'https://zwavgmbntulsvrrdghdg.supabase.co';
+    const SUPA_KEY = 'sb_publishable__UoFxQdCt-6v0_PS5eaS3w_WR2kWJRT';
+
+    function formatarPreco(v){
+      const n = Number(v);
+      if (isNaN(n)) return null;
+      return 'R$ ' + n.toFixed(2).replace('.', ',');
+    }
+
+    async function carregarConteudoSite(){
+      try{
+        const [resConfig, resFotos] = await Promise.all([
+          fetch(`${SUPA_URL}/rest/v1/categorias_config?select=*`, { headers:{ apikey: SUPA_KEY } }),
+          fetch(`${SUPA_URL}/rest/v1/fotos?select=*&order=indice.asc`, { headers:{ apikey: SUPA_KEY } })
+        ]);
+        if(!resConfig.ok || !resFotos.ok) return;
+        const configs = await resConfig.json();
+        const fotos   = await resFotos.json();
+
+        const configMap = {};
+        configs.forEach(c => configMap[`${c.secao}|${c.categoria}`] = c);
+
+        // ── Atualiza cards de serviço (preço, visibilidade, foto) ──
+        document.querySelectorAll('.service-card[data-categoria]').forEach(card => {
+          const categoria = card.getAttribute('data-categoria');
+          const cfg = configMap[`servicos|${categoria}`];
+
+          if (cfg && cfg.oculto) {
+            card.classList.add('oculto-config');
+            return;
+          }
+
+          if (cfg && cfg.preco != null) {
+            const precoEl = card.querySelector('.price-value');
+            const formatado = formatarPreco(cfg.preco);
+            if (precoEl && formatado) precoEl.textContent = formatado;
+          }
+
+          const fotoServico = fotos.find(f => f.secao === 'servicos' && f.categoria === categoria);
+          if (fotoServico) {
+            const icon = card.querySelector('.service-icon');
+            const img = document.createElement('img');
+            img.className = 'service-photo';
+            img.src = fotoServico.public_url;
+            img.alt = categoria;
+            img.loading = 'lazy';
+            card.insertBefore(img, icon);
+          }
+        });
+
+        // ── Monta a galeria ──
+        const galeriaEl = document.getElementById('galeria-conteudo');
+        if (galeriaEl) {
+          const categoriasGaleria = [...new Set(
+            fotos.filter(f => f.secao === 'galeria').map(f => f.categoria)
+          )].filter(cat => {
+            const cfg = configMap[`galeria|${cat}`];
+            return !(cfg && cfg.oculto);
+          });
+
+          if (categoriasGaleria.length === 0) {
+            galeriaEl.innerHTML = '<p class="galeria-vazio">Em breve, fotos dos nossos trabalhos.</p>';
+          } else {
+            galeriaEl.innerHTML = categoriasGaleria.map(cat => {
+              const fotosCat = fotos.filter(f => f.secao === 'galeria' && f.categoria === cat);
+              const imgs = fotosCat.map(f =>
+                `<img src="${f.public_url}" alt="${cat}" loading="lazy">`
+              ).join('');
+              return `
+                <div class="galeria-cat">
+                  <h3 class="galeria-cat-title">${cat}</h3>
+                  <div class="galeria-grid">${imgs}</div>
+                </div>`;
+            }).join('');
+          }
+        }
+      }catch(err){
+        console.error('Erro ao carregar conteúdo dinâmico:', err);
+      }
+    }
+
+    carregarConteudoSite();
   </script>
 </body>
 </html>

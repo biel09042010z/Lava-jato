@@ -74,6 +74,15 @@
   .cat-card-body{padding:14px 18px 18px;}
   .cat-card.oculto .cat-card-body{pointer-events:none;}
 
+  /* PREÇO */
+  .field-preco{margin-bottom:16px;}
+  .field-preco label{display:block;font-size:0.78rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .preco-row{display:flex;gap:8px;}
+  .preco-row input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:0.9rem;background:var(--zinc);color:var(--white);}
+  .preco-row input:focus{outline:none;border-color:var(--yellow);}
+  .btn-save-preco{background:var(--yellow);color:var(--black);border:0;padding:10px 16px;border-radius:6px;font-size:0.85rem;font-weight:700;white-space:nowrap;font-family:'Inter',sans-serif;}
+  .btn-save-preco:hover{background:var(--yellow2);}
+
   /* FOTO GRID */
   .fotos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
   .foto-slot{position:relative;aspect-ratio:1/1;background:var(--zinc);border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--border);}
@@ -322,6 +331,16 @@
           ${oculto ? eyeSvg+'Mostrar' : eyeOffSvg+'Ocultar'}
         </button>`;
 
+      const precoId = `preco-${prefix}-${ci}`;
+      const precoHtml = secao==='servicos' ? `
+        <div class="field-preco">
+          <label for="${precoId}">Valor do serviço (R$)</label>
+          <div class="preco-row">
+            <input type="number" min="0" step="0.01" id="${precoId}" placeholder="Ex: 40.00" value="${cfg?.preco ?? ''}">
+            <button class="btn-save-preco" onclick="salvarPreco('${secao}','${cat}','${prefix}','${ci}')">Salvar</button>
+          </div>
+        </div>` : '';
+
       card.innerHTML=`
         <div class="cat-card-header">
           <div style="display:flex;align-items:center;gap:8px;">
@@ -331,6 +350,7 @@
           <div class="header-actions">${btnVis}</div>
         </div>
         <div class="cat-card-body">
+          ${precoHtml}
           ${slotsHtml}
           ${podeAdicionar ? `
             <label class="btn-add-foto" for="${fileId}">${plusSvg} Adicionar foto</label>
@@ -380,6 +400,42 @@
       configCache[key]={...(configCache[key]||{}), oculto:novoVal, secao, categoria};
       mostrarToast(novoVal ? `"${categoria}" ocultado no site.` : `"${categoria}" visível no site.`);
       await carregarFotos();
+    }catch(err){
+      mostrarToast('Erro: '+err.message);
+    }
+  }
+
+  // ── PREÇO ─────────────────────────────────────────────
+  async function salvarPreco(secao, categoria, prefix, ci){
+    const key   = `${secao}|${categoria}`;
+    const cfg   = configCache[key];
+    const input = document.getElementById(`preco-${prefix}-${ci}`);
+    const valor = input.value.trim();
+    const novoPreco = valor === '' ? null : Number(valor);
+
+    if (valor !== '' && (isNaN(novoPreco) || novoPreco < 0)) {
+      mostrarToast('Digite um valor válido.');
+      return;
+    }
+
+    try{
+      if(cfg?.id){
+        await fetch(`${SUPA_URL}/rest/v1/categorias_config?id=eq.${cfg.id}`,{
+          method:'PATCH',
+          headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json','Prefer':'return=minimal'},
+          body:JSON.stringify({preco:novoPreco})
+        });
+        configCache[key]={...cfg, preco:novoPreco};
+      } else {
+        const res=await fetch(`${SUPA_URL}/rest/v1/categorias_config`,{
+          method:'POST',
+          headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json','Prefer':'return=representation'},
+          body:JSON.stringify({secao,categoria,preco:novoPreco})
+        });
+        const [novo]=await res.json();
+        configCache[key]={...novo};
+      }
+      mostrarToast(`Valor de "${categoria}" salvo.`);
     }catch(err){
       mostrarToast('Erro: '+err.message);
     }
