@@ -117,7 +117,7 @@
   .btn-save svg{width:16px;height:16px;stroke:var(--black);stroke-width:2.4;fill:none;}
 
   /* TOAST */
-  .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--carbon);border:1px solid var(--border);color:var(--white);padding:12px 20px;border-radius:6px;font-size:0.88rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:30;white-space:nowrap;}
+  .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--carbon);border:1px solid var(--border);color:var(--white);padding:12px 20px;border-radius:6px;font-size:0.88rem;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:30;max-width:90vw;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
   @media(max-width:480px){
@@ -267,23 +267,29 @@
   }
 
   async function carregarFotos(){
-    const [resF, resC] = await Promise.all([
-      fetch(`${SUPA_URL}/rest/v1/fotos?select=*&order=indice.asc`,{
-        headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${session.access_token}`}
-      }),
-      fetch(`${SUPA_URL}/rest/v1/categorias_config?select=*`,{
-        headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${session.access_token}`}
-      })
-    ]);
-    const rows   = await resF.json();
-    const configs= await resC.json();
+    try{
+      const [resF, resC] = await Promise.all([
+        fetch(`${SUPA_URL}/rest/v1/fotos?select=*&order=indice.asc`,{
+          headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${session.access_token}`}
+        }),
+        fetch(`${SUPA_URL}/rest/v1/categorias_config?select=*`,{
+          headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${session.access_token}`}
+        })
+      ]);
+      if(!resF.ok){ const e=await resF.json().catch(()=>({})); throw new Error('fotos: '+(e.message||resF.status)); }
+      if(!resC.ok){ const e=await resC.json().catch(()=>({})); throw new Error('categorias_config: '+(e.message||resC.status)); }
+      const rows   = await resF.json();
+      const configs= await resC.json();
 
-    // monta cache de config
-    configCache = {};
-    configs.forEach(c=>{ configCache[`${c.secao}|${c.categoria}`]=c; });
+      // monta cache de config
+      configCache = {};
+      configs.forEach(c=>{ configCache[`${c.secao}|${c.categoria}`]=c; });
 
     buildSection('galeria-list',  'gal',  'galeria',  rows, MAX_GALERIA);
     buildSection('servicos-list', 'serv', 'servicos', rows, MAX_SERVICOS);
+    }catch(err){
+      mostrarToast('Erro ao carregar dados: '+err.message);
+    }
   }
 
   function buildSection(containerId, prefix, secao, rows, maxFotos){
@@ -448,7 +454,7 @@
   function mostrarToast(msg){
     const t=document.getElementById('toast');
     t.textContent=msg; t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2800);
+    setTimeout(()=>t.classList.remove('show'),5000);
   }
 </script>
 </body>
